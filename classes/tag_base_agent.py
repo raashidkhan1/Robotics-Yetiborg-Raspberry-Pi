@@ -58,7 +58,6 @@ class TagBaseAgent(BaseAgent):
     
     def _change_it(self) -> None:
         """Change the it state of the yeti to whatever it currently is not"""
-        global role_changed
         self.yeti.StopMotors()
         self.it = not self.it
         print("TBA  : switching roles! This robot is now", "it" if self.it else "not it")
