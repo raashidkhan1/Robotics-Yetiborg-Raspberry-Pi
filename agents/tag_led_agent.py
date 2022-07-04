@@ -68,7 +68,7 @@ class TagLedAgent(TagBaseAgent):
 
                 # centre_x -= 60     #to be tuned
                 # centre_y = 6-centre_y
-                centre_x = centre_x / width
+                centre_x = centre_x-(centre_x / width)
                 print("centre_x after proportion", centre_x)
                 return True, centre_x, centre_y, area  
             else:
