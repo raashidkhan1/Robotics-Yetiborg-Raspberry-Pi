@@ -3,6 +3,7 @@ from utils import is_vision_enabled
 import numpy as np
 from time import sleep
 import cv2
+from PIL import Image
 
 COLOR_RED= "RED"
 COLOR_YELLOW = "YELLOW"
@@ -57,8 +58,16 @@ class TagLedAgent(TagBaseAgent):
             if(width*height) > 10:
                 centre_x = x_cord+((width)/2)
                 centre_y = y_cord+((height)/2)
-                centre_x -= 60     #to be tuned
-                centre_y = 6-centre_y
+                print(centre_x, centre_y)
+                if is_vision_enabled:
+                    c=cv2.circle(self.image,(int(centre_x),int(centre_y)),3,(0,110,255),-1)
+                    c_im=Image.fromarray(c)
+                    self.show_image(c_im)
+
+                # centre_x -= 60     #to be tuned
+                # centre_y = 6-centre_y
+                centre_x = centre_x / width
+                print("centre_x after proportion", centre_x)
                 return True, centre_x, centre_y, area  
             else:
                 return False, 0, 0, 0
