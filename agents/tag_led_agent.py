@@ -13,7 +13,7 @@ class TagLedAgent(TagBaseAgent):
         super().__init__(it, remote_ip)
 
     def hide(self) -> None:
-        robot_led_detected, center_x, center_y, area = self.detect_robot_led(COLOR_RED)
+        robot_led_detected, center_x, center_y, area = self.detect_robot_led(COLOR_YELLOW)
         if(robot_led_detected):
             print("Chaser detected, Performing hide action")
             self.turn_away_from_robot(center_x)
@@ -23,7 +23,7 @@ class TagLedAgent(TagBaseAgent):
 
 
     def chase(self) -> None:
-        robot_led_detected, center_x, center_y, area = self.detect_robot_led(COLOR_YELLOW)
+        robot_led_detected, center_x, center_y, area = self.detect_robot_led(COLOR_RED)
         if(robot_led_detected):
             print("Hider detected, Performing chase action")
             driveLeft, driveRight = self._offset_to_speeds(center_x)
@@ -32,7 +32,7 @@ class TagLedAgent(TagBaseAgent):
             print("Chaser: Performing move around")
             self.move_around_action()
 
-    def detect_robot_led(self, color) -> None:
+    def detect_robot_led(self, color):
         if self.image:
             mask = self.segment_colour(self.image, color)
             loct, area = self.find_blob(mask)
@@ -51,11 +51,13 @@ class TagLedAgent(TagBaseAgent):
         color_range_hsv = []
         color_range_ycrcb = []
         if(color==COLOR_RED):
-            color_range_hsv = [np.array([160, 160, 10]), np.array([190, 200, 200])]
-            color_range_ycrcb = [np.array((0., 185., 0.)), np.array((255., 200., 255.))]
+            color_range_hsv.append(np.array([160, 160, 10]))
+            color_range_hsv.append(np.array([190, 200, 200]))
+            color_range_ycrcb.append(np.array((0., 185., 0.)))
+            color_range_ycrcb.append(np.array((255., 200., 255.)))
         else:
             color_range_hsv = [np.array([25, 50, 70]), np.array([35, 255, 255])]
-            color_range_ycrcb = [np.array([20, 142, 20]), np.array([255, 163, 90])]
+            color_range_ycrcb = [np.array((20, 142, 20)), np.array((255, 163, 90))]
 
         hsv_roi =  cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask_1 = cv2.inRange(hsv_roi, color_range_hsv[0], color_range_hsv[1])
@@ -91,7 +93,7 @@ class TagLedAgent(TagBaseAgent):
         
         return r,largest_contour
 
-    def move_around_action(self):
+    def move_around_action(self) -> None:
         print("no robot detected")
         distance = self.sonar_distance
         print("wall distance: ", distance)
@@ -124,7 +126,7 @@ class TagLedAgent(TagBaseAgent):
             driveRight = slow_side_speed
         return driveLeft, driveRight
 
-    def turn_away_from_robot(self, x_off = 0):
+    def turn_away_from_robot(self, x_off = 0) -> None:
         # If the robot is at the edge of the FOV, x_off=0.5, and this should
         # correspond to about 30 degrees
         robot_angle_approximation = abs(60 * x_off)

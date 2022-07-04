@@ -26,12 +26,14 @@ class TagBaseAgent(BaseAgent):
         self.btn_right = Button(GPIOPins.SWITCH_RIGHT)
 
         # remote
-        if remote_ip is not None:
+        self.remote_ip = remote_ip
+        if self.remote_ip is not None:
             self.remoteBotFactory = PiGPIOFactory(host=remote_ip)
             self.remote_red_light = PWMLED(GPIOPins.RED_LED, pin_factory=self.remoteBotFactory)
             self.remote_yellow_light = PWMLED(GPIOPins.YELLOW_LED, pin_factory=self.remoteBotFactory)
             self.remote_btn_left = Button(GPIOPins.SWITCH_LEFT, pin_factory=self.remoteBotFactory) 
             self.remote_btn_right = Button(GPIOPins.SWITCH_RIGHT, pin_factory=self.remoteBotFactory)
+            self.led_change_detector = threading.Thread(target=self._detect_LED_change())
 
         self.btn_left.when_pressed = self._perform_role_changes
         self.btn_right.when_pressed = self._perform_role_changes
@@ -49,7 +51,7 @@ class TagBaseAgent(BaseAgent):
 
         self.role_changed = False
         self.running = False
-        self.led_change_detector = threading.Thread(target=self._detect_LED_change())
+
 
     @property
     def sonar_distance(self) -> float:
@@ -73,8 +75,9 @@ class TagBaseAgent(BaseAgent):
         print("TBA  : initialising hide")
         self.red_light.value = 1    
         self.yellow_light.value = 0 
-        self.running = True
-        self.led_change_detector.start()
+        if self.remote_ip is not None:
+            self.running = True
+            self.led_change_detector.start()
         while not self.it:
             if self.image is not None:          
                 self.hide()
@@ -85,8 +88,9 @@ class TagBaseAgent(BaseAgent):
         print("TBA  : initialising chase")
         self.red_light.value = 0
         self.yellow_light.blink()
-        self.running = True
-        self.led_change_detector.start()
+        if self.remote_ip is not None:
+            self.running = True
+            self.led_change_detector.start()
         while self.it:
             if not self.sleeping and self.image is not None: 
                 self.chase()
@@ -115,11 +119,12 @@ class TagBaseAgent(BaseAgent):
     def _perform_role_changes(self) -> None:
         """Update it and remote LED 'IF a switch press miss occurs during a tag'"""
         self._change_it()
-        remote_red, remote_yellow = self._get_remote_led_status()
-        if remote_red and not self.it:
-            self.change_remote_led_on_button_press(0, 1)
-        elif remote_yellow and self.it:
-            self.change_remote_led_on_button_press(1, 0)
+        if self.remote_ip is not None:
+            remote_red, remote_yellow = self._get_remote_led_status()
+            if remote_red and not self.it:
+                self.change_remote_led_on_button_press(0, 1)
+            elif remote_yellow and self.it:
+                self.change_remote_led_on_button_press(1, 0)
 
     def hide(self) -> None:
         """The logic for deciding where to move when not 'it'. To be overriden."""
@@ -152,5 +157,6 @@ class TagBaseAgent(BaseAgent):
                 hide = threading.Thread(target=self._initialise_hide())
                 hide.start()
         print("TBA  : finished all games")
-        self.running = False
-        self.led_change_detector.join() # terminate the led change detector thread
+        if self.remote_ip is not None:
+            self.running = False
+            self.led_change_detector.join() # terminate the led change detector thread
