@@ -51,8 +51,9 @@ class TagLedAgent(TagBaseAgent):
         self.iter += 1
 
     def detect_robot_led(self, color):
+        image = self.image
         if self.image is not None:
-            mask = self.segment_colour(self.image, color)
+            mask = self.segment_colour(image, color)
             loct, area = self.find_blob(mask)
             x_cord, y_cord, width, height = loct
             if(width*height) > 10:
@@ -60,9 +61,8 @@ class TagLedAgent(TagBaseAgent):
                 centre_y = y_cord+((height)/2)
                 print(centre_x, centre_y)
                 if is_vision_enabled:
-                    c=cv2.circle(self.image,(int(centre_x),int(centre_y)),3,(0,110,255),-1)
-                    c_im=Image.fromarray(c)
-                    self.show_image(c_im)
+                    cv2.circle(image,(int(centre_x),int(centre_y)),3,(0,110,255),-1)
+                    self.show_image(image)
 
                 # centre_x -= 60     #to be tuned
                 # centre_y = 6-centre_y

@@ -42,4 +42,4 @@ class BaseAgent():
         if image is None:
             image = self.image
         window = 'secondary' if use_secondary else 'image'
-        cv2 .imshow(window, image)
+        cv2.imshow(window, image)
