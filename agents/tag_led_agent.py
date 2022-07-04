@@ -34,8 +34,8 @@ class TagLedAgent(TagBaseAgent):
 
     def detect_robot_led(self, color) -> None:
         if self.image:
-            mask_red = self.segment_colour(self.image)
-            loct, area = self.find_blob(mask_red)
+            mask = self.segment_colour(self.image, color)
+            loct, area = self.find_blob(mask)
             x_cord, y_cord, width, height = loct
             if(width*height) > 10:
                 centre_x = x_cord+((width)/2)
