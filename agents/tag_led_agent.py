@@ -33,7 +33,7 @@ class TagLedAgent(TagBaseAgent):
             self.move_around_action()
 
     def detect_robot_led(self, color):
-        if self.image:
+        if self.image is not None:
             mask = self.segment_colour(self.image, color)
             loct, area = self.find_blob(mask)
             x_cord, y_cord, width, height = loct
