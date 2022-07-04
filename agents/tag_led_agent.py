@@ -12,25 +12,42 @@ class TagLedAgent(TagBaseAgent):
         print("initialising the TagAgent")
         super().__init__(it, remote_ip)
 
+        self.iter = 0
+        self.robot_counter = 0
+
     def hide(self) -> None:
+        print("TA   : ITERATIION", self.iter)
+        if self.robot_counter > 0:
+            self.robot_counter -= 1
+            return
         robot_led_detected, center_x, center_y, area = self.detect_robot_led(COLOR_YELLOW)
         if(robot_led_detected):
             print("Chaser detected, Performing hide action")
             self.turn_away_from_robot(center_x)
+            self.robot_counter = 6
         else:
             print("Hider: Performing move around")
             self.move_around_action()
+        print("TA   : END ITERATION", self.iter)
+        self.iter += 1
 
 
     def chase(self) -> None:
+        print("TA   : ITERATIION", self.iter)
+        if self.robot_counter > 0:
+            self.robot_counter -= 1
+            return
         robot_led_detected, center_x, center_y, area = self.detect_robot_led(COLOR_RED)
         if(robot_led_detected):
             print("Hider detected, Performing chase action")
+            self.robot_counter = 6
             driveLeft, driveRight = self._offset_to_speeds(center_x)
             self.yeti.SetLeftRightIndefinite(driveLeft, driveRight)
         else:
             print("Chaser: Performing move around")
             self.move_around_action()
+        print("TA   : END ITERATION", self.iter)
+        self.iter += 1
 
     def detect_robot_led(self, color):
         if self.image is not None:
