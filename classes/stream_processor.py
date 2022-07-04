@@ -44,7 +44,7 @@ class StreamProcessor(threading.Thread):
         """Stores 'image' to 'agent.image'."""
         if self.agent.sleeping: return
         # The camera is upside down so the image needs to be flipped
-        image = cv2.flip(image, -1)
+        # image = cv2.flip(image, -1)
         # Trim the image to make it faster to compute
         self.agent.image = image[
             int(Settings.IMAGE_HEIGHT * 0.35):
