@@ -13,7 +13,7 @@ class TagBaseAgent(BaseAgent):
         """A base class for agents that play tag. Inherits BaseAgent.
         
         This class contains functions for the game mechanics. It tracks the
-        role of the robot (whether is is 'it'), controls the LEDs, listens
+        role of the robot (whether it is 'it'), controls the LEDs, listens
         to button presses (tags), and contains the logic for handling these
         tag events."""
         super().__init__()

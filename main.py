@@ -2,7 +2,7 @@ from sys import exit
 import traceback
 import argparse
 import cv2
-from agents import TagAgent
+from agents import TagLedAgent
 from utils import enable_vision, is_vision_enabled, set_yeti_07, is_valid_ip
 
 def main():
@@ -44,7 +44,7 @@ def main():
     agent = None
     try:
         if agent_arg == 'tag':
-            agent = TagAgent(is_it, remote_ip)
+            agent = TagLedAgent(is_it, remote_ip)
         else:
             raise argparse.ArgumentError('Invalid argument for "--agent". Possible values are "tag".')
         

@@ -54,7 +54,7 @@ class TagLedAgent(TagBaseAgent):
             color_range_hsv = [np.array([160, 160, 10]), np.array([190, 200, 200])]
             color_range_ycrcb = [np.array((0., 185., 0.)), np.array((255., 200., 255.))]
         else:
-            color_range_hsv = [np.array([22, 93, 0]), np.array([45, 255, 255])]
+            color_range_hsv = [np.array([25, 50, 70]), np.array([35, 255, 255])]
             color_range_ycrcb = [np.array([20, 142, 20]), np.array([255, 163, 90])]
 
         hsv_roi =  cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
