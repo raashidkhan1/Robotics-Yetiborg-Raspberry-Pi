@@ -61,8 +61,10 @@ class TagLedAgent(TagBaseAgent):
                 centre_y = y_cord+((height)/2)
                 print(centre_x, centre_y)
                 if is_vision_enabled:
-                    cv2.circle(image,(int(centre_x),int(centre_y)),3,(0,110,255),-1)
+                    c=cv2.circle(image,(int(centre_x),int(centre_y)),3,(0,110,255),-1)
                     self.show_image(image)
+                    c_im=Image.fromarray(c)
+                    c_im.save("t4.tif")
 
                 # centre_x -= 60     #to be tuned
                 # centre_y = 6-centre_y
