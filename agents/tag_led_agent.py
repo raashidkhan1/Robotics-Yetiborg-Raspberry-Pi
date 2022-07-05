@@ -13,11 +13,9 @@ class TagLedAgent(TagBaseAgent):
         print("initialising the TagAgent")
         super().__init__(it, remote_ip)
 
-        self.iter = 0
         self.robot_counter = 0
 
     def hide(self) -> None:
-        print("TA   : ITERATIION", self.iter)
         if self.robot_counter > 0:
             self.robot_counter -= 1
             return
@@ -29,12 +27,9 @@ class TagLedAgent(TagBaseAgent):
         else:
             print("Hider: Performing move around")
             self.move_around_action()
-        print("TA   : END ITERATION", self.iter)
-        self.iter += 1
 
 
     def chase(self) -> None:
-        print("TA   : ITERATIION", self.iter)
         if self.robot_counter > 0:
             self.robot_counter -= 1
             return
@@ -47,8 +42,6 @@ class TagLedAgent(TagBaseAgent):
         else:
             print("Chaser: Performing move around")
             self.move_around_action()
-        print("TA   : END ITERATION", self.iter)
-        self.iter += 1
 
     def detect_robot_led(self, color):
         image = self.image
@@ -56,20 +49,18 @@ class TagLedAgent(TagBaseAgent):
             mask = self.segment_colour(image, color)
             loct, area = self.find_blob(mask)
             x_cord, y_cord, width, height = loct
+            h, w, _ = image.shape
             if(width*height) > 10:
-                centre_x = x_cord+((width)/2)
-                centre_y = y_cord+((height)/2)
+                centre_x = x_cord-((w)/2)/w
+                centre_y = y_cord-((h)/2)/h
                 print(centre_x, centre_y)
                 if is_vision_enabled:
-                    c=cv2.circle(image,(int(centre_x),int(centre_y)),3,(0,110,255),-1)
-                    self.show_image(image)
-                    c_im=Image.fromarray(c)
+                    rect_image=cv2.rectangle(image,(x_cord,y_cord),(x_cord+width,y_cord+height),(0,255,0),2)
+                    c_im=Image.fromarray(rect_image)
                     c_im.save("t4.tif")
+                    self.show_image(image)
 
-                # centre_x -= 60     #to be tuned
-                # centre_y = 6-centre_y
-                centre_x = centre_x / width
-                print("centre_x after proportion", centre_x)
+                print("centre_x after adjustment", centre_x)
                 return True, centre_x, centre_y, area  
             else:
                 return False, 0, 0, 0
@@ -97,10 +88,9 @@ class TagLedAgent(TagBaseAgent):
         kern_erode  = np.ones((3,3),np.uint8)
         mask= cv2.erode(mask,kern_erode)      #Eroding
         mask=cv2.dilate(mask,kern_dilate)     #Dilating
-        #cv2.imshow('mask',mask)
         return mask
 
-    #returns the red colored circle
+    #returns the colored circle
     def find_blob(self, blob): 
         largest_contour=0
         cont_index=0
@@ -112,8 +102,6 @@ class TagLedAgent(TagBaseAgent):
                 largest_contour=area
             
                 cont_index=idx
-                #if res>15 and res<18:
-                #    cont_index=idx
                                 
         r=(0,0,2,2)
         if len(contours) > 0:

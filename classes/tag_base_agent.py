@@ -28,7 +28,7 @@ class TagBaseAgent(BaseAgent):
         # remote
         self.remote_ip = remote_ip
         if self.remote_ip is not None:
-            self.remoteBotFactory = PiGPIOFactory(host=remote_ip)
+            self.remoteBotFactory = PiGPIOFactory(host=self.remote_ip)
             self.remote_red_light = PWMLED(GPIOPins.RED_LED, pin_factory=self.remoteBotFactory)
             self.remote_yellow_light = PWMLED(GPIOPins.YELLOW_LED, pin_factory=self.remoteBotFactory)
             self.remote_btn_left = Button(GPIOPins.SWITCH_LEFT, pin_factory=self.remoteBotFactory) 
