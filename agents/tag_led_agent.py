@@ -51,8 +51,8 @@ class TagLedAgent(TagBaseAgent):
             x_cord, y_cord, width, height = loct
             h, w, _ = image.shape
             if(width*height) > 10:
-                centre_x = x_cord-((w)/2)/w
-                centre_y = y_cord-((h)/2)/h
+                centre_x = (x_cord - ( w / 2 )) / w
+                centre_y = (y_cord - ( h / 2 )) / h
                 print(centre_x, centre_y)
                 if is_vision_enabled:
                     rect_image=cv2.rectangle(image,(x_cord,y_cord),(x_cord+width,y_cord+height),(0,255,0),2)
